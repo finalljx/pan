@@ -1,0 +1,115 @@
+<html ng-app="ionicApp">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>Ionic Radio Buttons</title>
+    <link href="./css/ionic.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="./js/ionic.bundle.js"></script>
+    <script src="script.js"></script>
+</head>
+
+<body ng-controller="RootCtrl">
+  <ion-nav-bar class="bar-positive"></ion-nav-bar>
+  <ion-nav-view>
+  <ion-view>
+    <ion-content>hello</ion-content>
+  </ion-view>
+  </ion-nav-view>
+    <div class="bar bar-header item-input-inset">
+        <label for="" class="item-input-wrapper">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="search" placeholder="search">
+        </label>
+        <button class="button button-clear">cancel</button>
+    </div>
+    <div style="padding-top:60px">
+        <button class="button">default</button>
+        <button class="button button-light">button-light</button>
+        <button class="button button-royal">button-royal</button>
+        <button class="button button-small button-energized">small-button</button>
+        <button class="button button-large button-balanced">button-large</button>
+        <button class="button"><i class="icon ico-loading-c">loading</i></button>
+        <button class="button icon-left ion-home">Home</button>
+        <a class="button icon-left ion-chevron-right button-calm"></a>
+        <a href="" class="button icon-left ion-chevron-left button-clear button-dark">back</a>
+        <button class="button icon ion-gear-a"></button>
+        <button class="button btton-icon icon ion-settings button-clear button-dark"></button>
+        <button class="button-bar">
+            <button class="button">firstbutton</button>
+            <button class="button">second</button>
+        </button>
+        <div class="row">
+            <div class="col col-50 col-offset-10">
+                <button class="button button-block button-positive">button-positive</button>
+            </div>
+            <div class="col">
+                <button class="button button-full button-dark">button-full</button>
+            </div>
+            <div class="col">col</div>
+        </div>
+        <ul class="list list-inset">
+            <li>
+                <a class="item item-icon-left" href="#">
+                    <i class="icon ion-email"></i> Check mail
+                </a>
+            </li>
+            <li class="item item-icon-left item-icon-right">
+                <i class="icon ion-chatbubble-working"></i> call ma
+                <i class="icon ion-ios-telephone-outline"></i>
+            </li>
+            <li>
+                <a href="#" class="item item-icon-left">
+                    <i class="icon ion-person-stalker"></i> friends
+                    <span class="badge badge-assertive">0</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="item item-button-right">call me
+        <buttton class="button button-positive">
+          <i class="icon ion-ios-telephone"></i>
+        </buttton>
+      </a>
+            </li>
+        </ul>
+        <div class="list">
+            <label class="item item-input ">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input type="text" placeholder="First Name">
+            </label>
+        </div>
+    </div>
+
+
+
+    <div class="bar bar-footer">
+        <div class="tabs tabs-icon-only">
+            <a class="tab-item">
+                <i class="icon ion-home"></i>
+            </a>
+            <a class="tab-item">
+                <i class="icon ion-star"></i>
+            </a>
+            <a class="tab-item">
+                <i class="icon ion-gear-a"></i>
+            </a>
+            <a class="tab-item">
+                <i class="icon ion-gear-a"></i>
+            </a>
+        </div>
+    </div>
+    <script id="newTask.html" type="text/ng-template">
+      <div id="task-view" class="modal slide-in-up" ng-controller="TaskCtrl">
+        <header class="bar bar-header bar-secondary">
+          <h1 class="title">New Task</h1>
+          <button class="button button-clear button-primary" ng-click="close()">Done</button>
+        </header>
+        <ion-content class="padding has-header">
+          <input type="text" placeholder="I need to do this...">
+        </ion-content>
+      </div>
+    </script>
+</body>
+
+</html>

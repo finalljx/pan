@@ -1,0 +1,21 @@
+
+<ion-view title="更多">
+  <ion-content>
+    <div class="list list-inset">
+       <div class="item item-divider"> 
+          Settings
+        </div>
+        <ion-toggle ng-model="item.checked" ng-repeat="item in devList" ng-checked="item.checked">{{item.text}}</ion-toggle>
+        <div class="item">
+            <pre ng-bind="devList | json"></pre>
+        </div>
+        <div class="item item-divider"> 
+          
+        </div>
+        <div class="item">
+          <button class="button button-full button-assertive" ng-click="goLogin()">退出当前账号</button>
+        </div>
+    </div>
+
+  </ion-content>
+</ion-view>

@@ -1,0 +1,22 @@
+<ion-view>
+    <ion-nav-title>传输列表</ion-nav-title>
+    <ion-content class="padding">
+        <div class="row">
+            <div class="button-bar">
+                <a class="button" ng-click="getTransingList()">下载完成</a>
+                <a class="button" ng-click="getTransedList()">下载中</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="list card" ng-repeat="trans in transList">
+                    <div class="item item-avatar">
+                        <img src="{{trans.src}}">
+                        <h2>{{trans.title}}</h2>
+                        <p>{{trans.date}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

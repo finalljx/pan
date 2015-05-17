@@ -1,0 +1,22 @@
+
+      <ion-view view-title="{{fileTitle}}">
+        <ion-content class="padding">
+          <div class="row">
+            <ion-refresher pulling-text="refreshing" on-refresh="doRefresh()"></ion-refresher>
+            <div class="col">
+                <ion-list>
+                    <ion-item ng-repeat="item in fileLists" item="item" ng-click="getFileList(item)" class="item-remove-animate">
+                        Item {{ item.name }}
+                        <ion-option-button class="button-assertive" ng-click="edit(item)">
+                            Edit
+                        </ion-option-button>
+                        <ion-option-button class="button-calm" ng-click="share(item)">
+                            Share
+                        </ion-option-button>
+                    </ion-item>
+                </ion-list>
+            </div>
+        </div>
+        </ion-content>
+      </ion-view>
+  

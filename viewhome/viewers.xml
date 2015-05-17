@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<viewers>
+	<viewer id="mebox" type="remote" source="https://box.vgolive.com">
+		<!-- 登陆验证 -->
+		<view id="loginvalidate" template="login/loginValidate.jsp" />
+		
+	
+	
+		
+		<!-- 已读 -->
+		<view id="messagereadlist" template="digi/message/readlist.xsl"
+			encoding="utf-8" />
+
+
+		<view id="messagesublist" template="digi/message/sublist.xsl"
+			encoding="utf-8" />
+
+	</viewer>	
+
+		
+</viewers>
