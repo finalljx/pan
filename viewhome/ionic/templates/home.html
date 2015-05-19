@@ -1,24 +1,28 @@
 <ion-view view-title="Home">
     <ion-content class="padding">
-        
         <div class="row">
             <div class="col">
                 <a class="button button-icon icon ion-folder " ng-click="showPopup()"></a>
             </div>
             <div class="col col-90">
-                <label for="" class="item item-input">
-                    <i class="icon ion-search placeholder-icon"></i>
-                    <input type="search" placeholder="search">
-                </label>
+                <div class="item item-input-inset">
+                    <label for="" class=" item-input-wrapper">
+                        <i class="icon ion-search placeholder-icon"></i>
+                        <input type="search" placeholder="search">
+                    </label>
+                    <button class="button button-small button">
+                        搜  索
+                    </button>
+                </div>
             </div>
         </div>
+       
         <div class="row">
             <ion-refresher pulling-text="refreshing" on-refresh="doRefresh()"></ion-refresher>
             <div class="col">
                 <ion-list>
                     <ion-item ng-repeat="item in fileLists" item="item" ng-click="openDirectory(item)" class="item-remove-animate item-icon-left">
-                    
-                    	<i class="icon ion-folder" ng-show="item.type=='directory'"></i>{{ item.name }}
+                        <i class="icon ion-ios-folder-outline" ng-show="item.type=='directory'"></i>{{ item.name }}
                         <ion-option-button class="button-assertive" ng-click="edit(item)">
                             Edit
                         </ion-option-button>

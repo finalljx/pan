@@ -1,11 +1,6 @@
 angular.module('hori', ['ionic'])
 
-.config(['$httpProvider', function($httpProvider) {
-        $httpProvider.defaults.useXDomain = true;
-         $httpProvider.defaults.withCredentials = true;
-        delete $httpProvider.defaults.headers.common['X-Requested-With'];
-    }
-])
+
 .config(function($stateProvider, $urlRouterProvider) {
 
         $stateProvider
@@ -25,7 +20,7 @@ angular.module('hori', ['ionic'])
             })
 
         .state('tabs.fileList', {
-                url: "/fileList?param1&param2",
+                url: "/fileList?param1&param2&parent_dir",
                 views: {
                     'home-tab': {
                         templateUrl: "templates/fileList.html",
@@ -44,73 +39,91 @@ angular.module('hori', ['ionic'])
             })
 
         .state('tabs.more', {
-            url: "/more",
-            views: {
-                'more-tab': {
-                    templateUrl: "templates/more.html",
-                    controller: 'moreCtrl'
+                url: "/more",
+                views: {
+                    'more-tab': {
+                        templateUrl: "templates/more.html",
+                        controller: 'moreCtrl'
+                    }
                 }
-            }
-        })
-        .state('login',{
-          url:"/login",
-          templateUrl: "templates/login.html",
-          controller:'LoginCtrl'
-        })
+            })
+            .state('login', {
+                url: "/login",
+                templateUrl: "templates/login.html",
+                controller: 'LoginCtrl'
+            })
 
         $urlRouterProvider.otherwise("/login");
 
     })
-.controller('LoginCtrl', ['$scope','$rootScope','$http','$state','deviceService', function($scope,$rootScope,$http,$state,deviceService){
-  $scope.userInfo={
-    userName:"",
-    password:""
-  };
-  $scope.login=function(){
-    console.log($scope.userInfo.userName);
-    console.log($scope.userInfo.password);
-    
-    deviceService.ajax({type: 'get', url: 'http://localhost:8080/view/mebox/loginvalidate/api/login?data-header=X-Auth-User:demouser01&data-header=X-Auth-Key:96e79218965eb72c92a549dd5a330112&data-convert=xml'
-}).success(function(data, status, headers, config) {
+    .controller('LoginCtrl', ['$scope', '$rootScope', '$http', '$state', 'deviceService', function($scope, $rootScope, $http, $state, deviceService) {
+        $scope.userInfo = {
+            userName: "",
+            password: ""
+        };
+        $scope.login = function() {
+            console.log($scope.userInfo.userName);
+            console.log($scope.userInfo.password);
 
-            console.log(data);
-            if(data.success){
-                $rootScope.containerName=data.containerName;
-                $rootScope.token=data.token;
-                $state.go("tabs.home");
-            }
-            
+            deviceService.ajax({
+                type: 'get',
+                url: 'http://localhost:8080/view/mebox/loginvalidate/api/login?data-header=X-Auth-User:demouser01&data-header=X-Auth-Key:96e79218965eb72c92a549dd5a330112&data-convert=xml'
+            }).success(function(data, status, headers, config) {
 
-        }).error(function(data, status, headers, config) {
-            $scope.fileLists = [];
-        })
-  
-  }
-}])
-    .controller('HomeCtrl', function($scope, $ionicLoading, $http, $state, $ionicHistory, $ionicPopup, $timeout) {
+                console.log(data);
+                if (data.success) {
+
+                    localStorage.setItem("containerName", data.containerName);
+                    localStorage.setItem("token", data.token);
+
+                    $state.go("tabs.home");
+                }
+
+
+            }).error(function(data, status, headers, config) {
+                $scope.fileLists = [];
+            })
+
+        }
+    }])
+    .controller('HomeCtrl', function($scope, $ionicLoading, $http, $state, $ionicHistory, $timeout, $ionicPopup,dataService) {
         $scope.fileLists = [];
-        $http.get("./test/home.json").success(function(data, status, headers, config) {
+        var fileListPromist = dataService.getUserFileList();
 
+        fileListPromist.then(function(data) {
+            
             $scope.fileLists = data;
-
-        }).error(function(data, status, headers, config) {
+        }, function(errorData) {
             $scope.fileLists = [];
+        }, function(notifiyData) {
+
         })
+
         $scope.doRefresh = function() {
-            $scope.fileLists.unshift({
-                "name": "do three",
-                "id": "file3",
-                "type": "directory"
-            });
-            $scope.$broadcast('scroll.refreshComplete');
-            $scope.$apply();
+           
+            var fileListPromist = dataService.getUserFileList();
+
+            fileListPromist.then(function(data) {
+               
+                $scope.fileLists = data;
+                 $scope.$broadcast('scroll.refreshComplete');
+                $scope.$apply();
+            }, function(errorData) {
+                $scope.fileLists = [];
+                $scope.$broadcast('scroll.refreshComplete');
+                $scope.$apply();
+            }, function(notifiyData) {
+
+            })
+           
         };
         $scope.openDirectory = function(item) {
             console.log(item);
             if (item.type == "directory") {
                 $state.go('tabs.fileList', {
                     "param1": item.id,
-                    "param2": item.name
+                    "param2": item.name,
+                    "parent_dir":item.id
                 });
             } else if (item.type == "file") {
                 var confirmPopup = $ionicPopup.confirm({
@@ -120,7 +133,7 @@ angular.module('hori', ['ionic'])
                 confirmPopup.then(function(res) {
                     if (res) {
                         $ionicPopup.alert({
-                          title:"开始下载"
+                            title: "开始下载"
                         })
                     } else {
                         console.log('You are not sure');
@@ -175,18 +188,25 @@ angular.module('hori', ['ionic'])
     .controller('HomeTabCtrl', function($scope) {
         console.log('HomeTabCtrl');
     })
-    .controller('FileListCtrl', function($scope, $http, $stateParams, $state, $ionicHistory, $ionicNavBarDelegate) {
+    .controller('FileListCtrl', function($scope, $http, $stateParams, $state, $ionicHistory, $ionicNavBarDelegate,$ionicPopup,dataService) {
         console.log($stateParams);
         $scope.fileTitle = $stateParams.param2;
         //根据上层文件夹id获取文件列表
         $scope.fileLists = [];
-        $http.get("./test/dir1.json").success(function(data, status, headers, config) {
+        var dirId=$stateParams.param1
+        var parent_dir=$stateParams.parent_dir
+        var fileListPromist = dataService.getFileList(parent_dir);
 
-            $scope.fileLists = data;
-
-        }).error(function(data, status, headers, config) {
+        fileListPromist.then(function(fileList) {
+            console.log(dirId+"list=");
+            console.log(fileList);
+            $scope.fileLists = fileList;
+        }, function(errorData) {
             $scope.fileLists = [];
+        }, function(notifiyData) {
+
         })
+       
         $scope.doRefresh = function() {
             $scope.fileLists.unshift({
                 "name": "do three",
@@ -196,12 +216,36 @@ angular.module('hori', ['ionic'])
             $scope.$broadcast('scroll.refreshComplete');
             $scope.$apply();
         };
-        $scope.getFileList = function(item) {
+      
+        $scope.openDirectory = function(item) {
+            console.log(item);
+            var thisDir=item.id;
+            if(parent_dir!=""){
+                thisDir=parent_dir+"/"+item.id;
+            }
+            console.log("thisDir="+thisDir);
+            if (item.type == "directory") {
+                $state.go('tabs.fileList', {
+                    "param1": item.id,
+                    "param2": item.name,
+                    "parent_dir":thisDir
+                });
+            } else if (item.type == "file") {
+                var confirmPopup = $ionicPopup.confirm({
+                    title: '文件下载',
+                    template: '确定要在线预览该文件？'
+                });
+                confirmPopup.then(function(res) {
+                    if (res) {
+                        $ionicPopup.alert({
+                            title: "开始下载"
+                        })
+                    } else {
+                        console.log('You are not sure');
+                    }
+                });
+            }
 
-            $state.go('tabs.fileList', {
-                "param1": item.id,
-                "param2": item.name
-            });
         }
     })
     .controller('transListCtrl', function($scope, $http) {
@@ -233,18 +277,18 @@ angular.module('hori', ['ionic'])
             })
         }
     })
-    .controller('moreCtrl', ['$scope',"$state", function($scope,$state) {
+    .controller('moreCtrl', ['$scope', "$state", function($scope, $state) {
         $scope.devList = [{
-            text: "HTML5",
+            text: "仅在wifi下上传/下载",
             checked: true
         }, {
-            text: "CSS3",
+            text: "同步通讯录",
             checked: false
         }, {
-            text: "JavaScript",
+            text: "相册自动备份",
             checked: false
         }];
-        $scope.goLogin=function(){
-          $state.go("login");
+        $scope.goLogin = function() {
+            $state.go("login");
         }
     }])

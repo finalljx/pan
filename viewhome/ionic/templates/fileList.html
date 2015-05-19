@@ -5,8 +5,7 @@
             <ion-refresher pulling-text="refreshing" on-refresh="doRefresh()"></ion-refresher>
             <div class="col">
                 <ion-list>
-                    <ion-item ng-repeat="item in fileLists" item="item" ng-click="getFileList(item)" class="item-remove-animate">
-                        Item {{ item.name }}
+                    <ion-item ng-repeat="item in fileLists" item="item" ng-click="openDirectory(item)" class="item-remove-animate item-icon-left"><i class="icon ion-ios-folder-outline" ng-show="item.type=='directory'"></i>{{ item.name }}
                         <ion-option-button class="button-assertive" ng-click="edit(item)">
                             Edit
                         </ion-option-button>

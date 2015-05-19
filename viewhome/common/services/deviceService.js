@@ -474,7 +474,7 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q', 'co
                 horiServiceScript.addDependency(requestDataOpration);
                 horiServiceScript.dispatch();
                 horiService.flushOperations();
-                return deffer;
+                return deffer.promise;
             }
         }
 

@@ -1,21 +1,29 @@
-
 <ion-view title="更多">
-  <ion-content>
-    <div class="list list-inset">
-       <div class="item item-divider"> 
-          Settings
-        </div>
-        <ion-toggle ng-model="item.checked" ng-repeat="item in devList" ng-checked="item.checked">{{item.text}}</ion-toggle>
-        <div class="item">
-            <pre ng-bind="devList | json"></pre>
-        </div>
-        <div class="item item-divider"> 
-          
-        </div>
-        <div class="item">
-          <button class="button button-full button-assertive" ng-click="goLogin()">退出当前账号</button>
-        </div>
-    </div>
+    <ion-content>
+        <div class="list list-inset">
+            <div class="item item-divider">
+            </div>
+            <div class="item">
+                <a class="item item-avatar item-icon-right" href="#">
 
-  </ion-content>
+                   
+                    <i class="item-image ion-android-person" style="font-size: 32"></i>
+                    <h2>demouser01</h2>       
+                     <i class="icon ion-ios-arrow-forward"></i>             
+                </a>
+            </div>
+            <div class="item item-divider">
+                设置
+            </div>
+            <ion-toggle ng-model="item.checked" ng-repeat="item in devList" ng-checked="item.checked">{{item.text}}</ion-toggle>
+           <!--  <div class="item">
+                <pre ng-bind="devList | json"></pre>
+            </div> -->
+            <div class="item item-divider">
+            </div>
+            <div class="item">
+                <button class="button button-full button-assertive" ng-click="goLogin()">退出当前账号</button>
+            </div>
+        </div>
+    </ion-content>
 </ion-view>

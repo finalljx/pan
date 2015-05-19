@@ -3,39 +3,96 @@
  * Date: 2014-11-01
  * 提供各个功能模块的数据接口
  */
-angular.module('hori').service('dataService', ['configService', 'deviceService', 'global', function(configService, deviceService, global) {
+angular.module('hori').service('dataService', ['$q','configService', 'deviceService', function($q,configService, deviceService) {
 
     /*
-     * @description: 获取企业新闻列表
+     * @description: 获取文件列表
      * @param model 查询模型
      */
-    this.getNews = function(model) {
-        var url = '',
-            start = 1,
-            count = 20;
-        if (angular.isObject(model)) {
-            if (model.start) {
-                start = model.start;
-            }
 
-            if (model.count) {
-                count = model.count;
-            }
-        }
+    this.getUserFileList = function() {
+        
 
-        try {
-            url = configService.appServerHost + 'view/oa/newslist/Application/DigiFlowInfoPublish.nsf/InfoByDateView_2?readviewentries?login';
-            url = url + '&start=' + start + '&count=' + count;
-        } catch (e) {
+        var deffer = $q.defer();
+        var url = configService.appServerHost + "view/mebox/loginvalidate/api/file/"+localStorage.getItem("containerName")+"/?data-header=X-Auth-Token:"+localStorage.getItem("token")+"&data-result=text";
 
-        }
-
-        return deviceService.ajax({
-            'type': 'post',
+        var allFilelist=[];
+       
+        
+        deviceService.ajax({
+            'type': 'get',
             'url': url
-        });
-    };
+        }).success(function(data, status, headers, config) {
+            
+           var dirsList=data.dirs;
+          for(var i=0;i<dirsList.length;i++){
+                var dirObj=new Object();
+                dirObj.name=dirsList[i].name;
+                dirObj.id=dirsList[i].name;
+                dirObj.type="directory";
+                dirObj.parent_dir=data.parent_dir;
+                allFilelist.push(dirObj);
+          }
+          var fileList=data.files;
+          for(var i=0;i<fileList.length;i++){
+                var fileObj=new Object();
+                fileObj.name=fileList[i].name;
+                fileObj.id=fileList[i].name;
+                fileObj.type="file";
+                fileObj.parent_dir=data.parent_dir;
+                allFilelist.push(fileObj);
+          }
+            deffer.resolve(allFilelist);
 
+        }).error(function(data, status, headers, config) {
+            deffer.reject(allFilelist);
+        })
+
+        return deffer.promise;
+    };
+    /*
+        得到指定目录下文件夹及目录
+    */
+ this.getFileList = function(dirName) {
+        
+
+        var deffer = $q.defer();
+        var url = configService.appServerHost + "view/mebox/loginvalidate/api/file/"+localStorage.getItem("containerName")+"/"+dirName+"/?data-header=X-Auth-Token:"+localStorage.getItem("token")+"&data-result=text";
+
+        var allFilelist=[];
+       
+        
+        deviceService.ajax({
+            'type': 'get',
+            'url': url
+        }).success(function(data, status, headers, config) {
+            
+           var dirsList=data.dirs;
+          for(var i=0;i<dirsList.length;i++){
+                var dirObj=new Object();
+                dirObj.name=dirsList[i].name;
+                dirObj.id=dirsList[i].name;
+                dirObj.type="directory";
+                dirObj.parent_dir=data.parent_dir;
+                allFilelist.push(dirObj);
+          }
+          var fileList=data.files;
+          for(var i=0;i<fileList.length;i++){
+                var fileObj=new Object();
+                fileObj.name=fileList[i].name;
+                fileObj.id=fileList[i].name;
+                fileObj.type="file";
+                 fileObj.parent_dir=data.parent_dir;
+                allFilelist.push(fileObj);
+          }
+            deffer.resolve(allFilelist);
+
+        }).error(function(data, status, headers, config) {
+            deffer.reject(allFilelist);
+        })
+
+        return deffer.promise;
+    };
     /*
      * @description: 获取企业新闻详细信息
      * @param model 查询模型

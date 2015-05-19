@@ -14,6 +14,7 @@
      <script type="text/javascript" src="../common/services/configService.js"></script>
     <script type="text/javascript" src="../common/services/deviceService.js"></script>
     <script type="text/javascript" src="../common/services/horiService.js"></script>
+    <script type="text/javascript" src="../common/services/dataService.js"></script>
   </head>
 
   <body>
@@ -29,15 +30,15 @@
     <script id="templates/tabs.html" type="text/ng-template">
       <ion-tabs class="tabs-icon-top tabs-positive">
 
-        <ion-tab title="Home" icon="ion-home" href="#/tab/home">
+        <ion-tab title="网盘" icon="ion-ios-cloud-outline" href="#/tab/home">
           <ion-nav-view name="home-tab"></ion-nav-view>
         </ion-tab>
 
-        <ion-tab title="传输列表" icon="ion-ios-information" href="#/tab/transList">
+        <ion-tab title="传输列表" icon="ion-archive" href="#/tab/transList">
           <ion-nav-view name="trans-tab"></ion-nav-view>
         </ion-tab>
 
-        <ion-tab title="更多" icon="ion-ios-world" ui-sref="tabs.more">
+        <ion-tab title="更多" icon="ion-ios-more-outline" ui-sref="tabs.more">
           <ion-nav-view name="more-tab"></ion-nav-view>
         </ion-tab>
 
