@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<html><head /><body>404 Not Found
-
-The resource could not be found.
-
-   <data-params><issucceed>true</issucceed><statuscode>404</statuscode><headers><param name="Content-Length" value="52" /><param name="Content-Type" value="text/plain; charset=UTF-8" /><param name="X-Trans-Id" value="txdf8f26a41d10453d8a2a8769f1e529a6" /><param name="Cache-Control" value="no-cache" /><param name="Date" value="Tue, 19 May 2015 09:32:48 GMT" /></headers><redirects /><usertoken><storeid>00000000000000000000000000000000</storeid><userid /><username /><authority>false</authority><cookies /></usertoken><message><protocal>https</protocal><url>https://box.vgolive.com/api/file/049_f71937d9feaddd806e9e6ac335a7437a/file33/</url><method>get</method><encoding>utf-8</encoding><type>remote</type><source>box.vgolive.com</source><template>/pan/viewhome/login/loginValidate.jsp</template><params /></message></data-params></body></html>
