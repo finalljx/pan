@@ -36,18 +36,23 @@
 					if(loginCodeNode!=null){
 						loginCode=loginCodeNode.getStringValue();
 					}
-					
+					System.out.println("loginCode="+loginCode);
 					if (loginCode.equals("200")){
 						json.put("success", true);
 						json.put("token",token);
 						json.put("containerName",containerName);
 						json.put("data-authorize","succeed");
 
-					}else{
-					
+					}
+					else if(loginCode.equals("401")){
+						json.put("success", false);
+						json.put("msg","用户名或密码错误");
+
+					}
+					else{				
 								
 						json.put("success", false);
-						json.put("msg","登陆异常,请联系管理员。");
+						json.put("msg","登陆异常11123,请联系管理员。");
 						out.clear();
 						out.print(json);
 

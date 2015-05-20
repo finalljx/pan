@@ -56,57 +56,98 @@ angular.module('hori', ['ionic'])
         $urlRouterProvider.otherwise("/login");
 
     })
-    .controller('LoginCtrl', ['$scope', '$rootScope', '$http', '$state', 'deviceService', function($scope, $rootScope, $http, $state, deviceService) {
+    .controller('LoginCtrl', ['$scope', '$rootScope', '$http', '$state', '$ionicLoading', '$ionicPopup','configService', 'deviceService', function($scope, $rootScope, $http, $state, $ionicLoading, $ionicPopup, configService,deviceService) {
         $scope.userInfo = {
             userName: "",
             password: ""
         };
+
         $scope.login = function() {
             console.log($scope.userInfo.userName);
             console.log($scope.userInfo.password);
+            var usr = $scope.userInfo.userName;
+            var password = $scope.userInfo.password;
+            if (usr == "") {
+                var alertPopup = $ionicPopup.alert({
+                    title: '系统提示',
+                    template: '请输入账号'
+                });
 
+                return false;
+            }
+            if (password == "") {
+                var alertPopup = $ionicPopup.alert({
+                    title: '系统提示',
+                    template: '请输入密码'
+                });
+
+                return false;
+            }
+            password = hex_md5(password);
+            $ionicLoading.show({
+                template: '登陆中...'
+            });
             deviceService.ajax({
                 type: 'get',
-                url: 'http://localhost:8080/view/mebox/loginvalidate/api/login?data-header=X-Auth-User:demouser01&data-header=X-Auth-Key:96e79218965eb72c92a549dd5a330112&data-convert=xml'
+                url: configService.appServerHost+'/view/mebox/loginvalidate/api/login?data-header=X-Auth-User:' + usr + '&data-header=X-Auth-Key:' + password + '&data-convert=xml'
             }).success(function(data, status, headers, config) {
 
                 console.log(data);
                 if (data.success) {
-
+                    $ionicLoading.hide();
                     localStorage.setItem("containerName", data.containerName);
                     localStorage.setItem("token", data.token);
 
                     $state.go("tabs.home");
+                } else {
+                    $ionicLoading.hide();
+                    var alertPopup = $ionicPopup.alert({
+                        title: '系统提示',
+                        template: data.msg
+                    });
                 }
 
 
             }).error(function(data, status, headers, config) {
+                $ionicLoading.hide();
+                console.log(data);
+                var alertPopup = $ionicPopup.alert({
+                    title: '系统提示',
+                    template: '登陆异常，请联系管理员'
+                });
                 $scope.fileLists = [];
+
             })
 
         }
     }])
-    .controller('HomeCtrl', function($scope, $ionicLoading, $http, $state, $ionicHistory, $timeout, $ionicPopup,dataService) {
+    .controller('HomeCtrl', function($rootScope,$scope, $ionicLoading, $http, $state, $ionicHistory, $timeout, $ionicPopup, dataService) {
         $scope.fileLists = [];
-        var fileListPromist = dataService.getUserFileList();
-
-        fileListPromist.then(function(data) {
+        $rootScope.currentPath="";
+        $rootScope.getDirFileList=function(dirPath,currentScope){
             
-            $scope.fileLists = data;
-        }, function(errorData) {
-            $scope.fileLists = [];
-        }, function(notifiyData) {
+             var fileListPromise = dataService.getFileList(dirPath);
 
-        })
+            fileListPromise.then(function(data) {
 
+                currentScope.fileLists = data;
+            }, function(errorData) {
+                currentScope.fileLists = [];
+            }, function(notifiyData) {
+
+            })
+        }
+        
+        $scope.getDirFileList("",$scope);
+        
         $scope.doRefresh = function() {
-           
+
             var fileListPromist = dataService.getUserFileList();
 
             fileListPromist.then(function(data) {
-               
+
                 $scope.fileLists = data;
-                 $scope.$broadcast('scroll.refreshComplete');
+                $scope.$broadcast('scroll.refreshComplete');
                 $scope.$apply();
             }, function(errorData) {
                 $scope.fileLists = [];
@@ -115,7 +156,7 @@ angular.module('hori', ['ionic'])
             }, function(notifiyData) {
 
             })
-           
+
         };
         $scope.openDirectory = function(item) {
             console.log(item);
@@ -123,7 +164,7 @@ angular.module('hori', ['ionic'])
                 $state.go('tabs.fileList', {
                     "param1": item.id,
                     "param2": item.name,
-                    "parent_dir":item.id
+                    "parent_dir": item.id
                 });
             } else if (item.type == "file") {
                 var confirmPopup = $ionicPopup.confirm({
@@ -141,7 +182,8 @@ angular.module('hori', ['ionic'])
                 });
             }
 
-        }
+        };
+
         $scope.edit = function(item) {
             console.log(item);
         }
@@ -185,28 +227,48 @@ angular.module('hori', ['ionic'])
         };
 
     })
+    .controller('searchController', ['$rootScope','$scope', 'dataService', function($rootScope,$scope, dataService) {
+
+        $scope.search = function(dirName, searchstr) {
+            searchstr = $scope.searchKey;
+            var dir =$scope.currentPath;
+            console.log("searchstr="+searchstr);
+            if(searchstr==""||typeof(searchstr)=="undefined"){
+               
+                 $rootScope.getDirFileList($rootScope.currentPath,$scope.$parent.$parent);
+                 return false;
+                
+            }
+            
+            var fileListPromist = dataService.searchDir(dir, searchstr);
+
+                fileListPromist.then(function(data) {
+
+                $scope.$parent.$parent.fileLists = data;
+
+            }, function(errorData) {
+                $scope.fileLists = [];
+            }, function(notifiyData) {
+
+            })
+        }
+    }])
     .controller('HomeTabCtrl', function($scope) {
         console.log('HomeTabCtrl');
     })
-    .controller('FileListCtrl', function($scope, $http, $stateParams, $state, $ionicHistory, $ionicNavBarDelegate,$ionicPopup,dataService) {
+    .controller('FileListCtrl', function($rootScope,$scope, $http, $stateParams, $state, $ionicHistory, $ionicNavBarDelegate, $ionicPopup, dataService) {
         console.log($stateParams);
         $scope.fileTitle = $stateParams.param2;
         //根据上层文件夹id获取文件列表
         $scope.fileLists = [];
-        var dirId=$stateParams.param1
-        var parent_dir=$stateParams.parent_dir
-        var fileListPromist = dataService.getFileList(parent_dir);
+        var dirId = $stateParams.param1;
+        var parent_dir = $stateParams.parent_dir;
+        if (parent_dir != "") {
+            $rootScope.currentPath = parent_dir + "/" ;
+        }
+        $rootScope.getDirFileList($scope.currentPath,$scope);
+        
 
-        fileListPromist.then(function(fileList) {
-            console.log(dirId+"list=");
-            console.log(fileList);
-            $scope.fileLists = fileList;
-        }, function(errorData) {
-            $scope.fileLists = [];
-        }, function(notifiyData) {
-
-        })
-       
         $scope.doRefresh = function() {
             $scope.fileLists.unshift({
                 "name": "do three",
@@ -216,19 +278,19 @@ angular.module('hori', ['ionic'])
             $scope.$broadcast('scroll.refreshComplete');
             $scope.$apply();
         };
-      
+
         $scope.openDirectory = function(item) {
-            console.log(item);
-            var thisDir=item.id;
-            if(parent_dir!=""){
-                thisDir=parent_dir+"/"+item.id;
+            
+            var thisDir = item.id;
+            if (parent_dir != "") {
+                thisDir = parent_dir + "/" + item.id;
             }
-            console.log("thisDir="+thisDir);
+           
             if (item.type == "directory") {
                 $state.go('tabs.fileList', {
                     "param1": item.id,
                     "param2": item.name,
-                    "parent_dir":thisDir
+                    "parent_dir": thisDir
                 });
             } else if (item.type == "file") {
                 var confirmPopup = $ionicPopup.confirm({
