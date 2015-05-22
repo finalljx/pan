@@ -8,7 +8,7 @@
  */
 angular.module('hori').factory('configService', [function() {
     return {
-        browserDebug: true,
+        browserDebug: false,
         mobileDebug: false,
         timeOutAlertStr: "请求服务器超时，请检查网络",
         // 默认ajax超时时间，单位毫秒
@@ -18,7 +18,8 @@ angular.module('hori').factory('configService', [function() {
         oaMobileServer: "V7dev/DigiWin",
         serverBaseUrl: "http://localhost:8080/",
         encryptKey: "horiTech",
-        appServerHost: "http://localhost:8080/"
+        appServerHost: "http://localhost:8080/",
+        appKey:"mebox"
     }
 }]);
 

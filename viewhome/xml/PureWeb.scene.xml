@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scene xmlns="http://www.horizonpower.com.cn/hpclient/scene-xml/" xmlns:builtin="http://www.horizonpower.com.cn/hpclient/scene-xml/built-in/">
+<size width="320" height="480" />
+    <component name="root">
+        <componentType>
+			<component name="application" type="builtin:appController"/>
+			<component name="case" type="builtin:caseController">
+				<properties>
+					<property name="navBarHidden">
+						<string>1</string>
+					</property>
+				</properties>
+			</component>
+            <component name="main" type="builtin:webView">
+                <frame x="0" y="0" width="320" height="450"/>
+                <properties>
+                    <!--
+                    <property name="target">
+                        <string>resource://localhost/index.html</string>
+                         <string>http://mobile.sugon.com/view/digilogin.html</string>
+                     </property>
+                     -->
+                </properties>
+            </component>
+        </componentType>
+    </component>
+   
+</scene>

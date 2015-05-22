@@ -87,9 +87,11 @@ angular.module('hori', ['ionic'])
             $ionicLoading.show({
                 template: '登陆中...'
             });
+            var url=configService.appServerHost+'view/mebox/loginvalidate/api/login?data-header=X-Auth-User:' + usr + '&data-header=X-Auth-Key:' + password + '&data-convert=xml';
+            console.log("login url="+url);
             deviceService.ajax({
                 type: 'get',
-                url: configService.appServerHost+'/view/mebox/loginvalidate/api/login?data-header=X-Auth-User:' + usr + '&data-header=X-Auth-Key:' + password + '&data-convert=xml'
+                url: url
             }).success(function(data, status, headers, config) {
 
                 console.log(data);

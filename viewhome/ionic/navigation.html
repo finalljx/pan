@@ -1,53 +1,40 @@
-
 <html ng-app="hori">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    
     <title>网盘</title>
-
-   
     <link href="./css/ionic.css" rel="stylesheet">
-    
     <script src="./js/ionic.bundle.js"></script>
     <script type="text/javascript" src="./nav.js"></script>
-     <script type="text/javascript" src="../common/services/configService.js"></script>
+    <script type="text/javascript" src="../common/services/configService.js"></script>
     <script type="text/javascript" src="../common/services/deviceService.js"></script>
     <script type="text/javascript" src="../common/services/horiService.js"></script>
     <script type="text/javascript" src="../common/services/dataService.js"></script>
     <script type="text/javascript" src="../common/md5.js"></script>
-  </head>
+</head>
 
-  <body>
-    
+<body>
     <ion-nav-bar class="bar-positive">
-      <ion-nav-back-button>
-      </ion-nav-back-button>
+        <ion-nav-back-button>
+        </ion-nav-back-button>
     </ion-nav-bar>
-             
     <ion-nav-view></ion-nav-view>
-
-
     <script id="templates/tabs.html" type="text/ng-template">
+     
       <ion-tabs class="tabs-icon-top tabs-positive">
-
-        <ion-tab title="网盘" icon="ion-ios-cloud-outline" href="#/tab/home">
-          <ion-nav-view name="home-tab"></ion-nav-view>
-        </ion-tab>
-
-        <ion-tab title="传输列表" icon="ion-archive" href="#/tab/transList">
-          <ion-nav-view name="trans-tab"></ion-nav-view>
-        </ion-tab>
-
-        <ion-tab title="更多" icon="ion-ios-more-outline" ui-sref="tabs.more">
-          <ion-nav-view name="more-tab"></ion-nav-view>
-        </ion-tab>
-
+          <ion-tab title="网盘" icon="ion-ios-cloud-outline" href="#/tab/home">
+              <ion-nav-view name="home-tab"></ion-nav-view>
+          </ion-tab>
+          <ion-tab title="传输列表" icon="ion-archive" href="#/tab/transList">
+              <ion-nav-view name="trans-tab"></ion-nav-view>
+          </ion-tab>
+          <ion-tab title="更多" icon="ion-ios-more-outline" ui-sref="tabs.more">
+              <ion-nav-view name="more-tab"></ion-nav-view>
+          </ion-tab>
       </ion-tabs>
+        
     </script>
+</body>
 
-
-    
-
-  </body>
 </html>

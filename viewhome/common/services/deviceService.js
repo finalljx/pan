@@ -5,7 +5,7 @@
  * Time: 下午2:47
  * To change this template use File | Settings | File Templates.
  */
-angular.module('hori').factory('deviceService', ['$http', '$location', '$q', 'configService', 'horiService', function($http, $location, $q, config, horiService) {
+angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$timeout', 'configService', 'horiService', function($http, $location, $q,$timeout, config, horiService) {
 
     var returnService = {};
 
@@ -437,35 +437,65 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q', 'co
         var method = args.type;
         var url = args.url;
         var data = args.data;
-        
-        if (config.browserDebug) {
+      
+        //转换url中多余 /,以兼容ios路径中/多个无法解析问题
+        url = url.substring(0,url.indexOf("://")+ 3) + url.substring(url.indexOf("://")+ 3).replace(/\/{2,}/g,"/");
+        // 补全请求地址，默认添加appKey参数
+        if(url.indexOf("?") != -1){
+            url = url + "&data-application=" + config.appKey;
+        }else{
+            url = url + "?data-application=" + config.appKey;
+        }
+
+         if (config.browserDebug) {
             data = angular.isObject(data) ? json2param(data) : data;
             return $http({
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
                 },
-                url: args.url,
+                url: url,
                 data: data,
                 method: (args.type).toUpperCase()
-            });
+            });          
+
+
 
         } else {
-            if (angular.isFunction(success)) {
-
+           
+                /*
+                        模拟angular的 http调用，返回promise对象，参数模拟http调用，data为客户端返回的数据，其他参数暂时返回空串
+                        fn(data, status, headers, config)
+                */
                 var deffer = $q.defer();
+                var promise=deffer.promise;
                 var requestDataOpration = new horiService.NativeOperation("application", "invokeAjax", [method.toLowerCase(), url, data]).dispatch();
-
+                promise.success=function(fn){
+                       
+                        promise.then(function(clientData){
+                            fn(clientData,"","","");
+                        }) 
+                        return promise;
+                    }
+                    promise.error=function(fn){
+                        promise.then(null,function(clientData){
+                            fn(clientData,"","","");
+                        }) 
+                        return promise;
+                    }
                 var horiServiceScript = new horiService.ScriptOperation(function() {
                     var returnData = "";
                     returnData = requestDataOpration.returnValue;
+                    console.log(returnData)
                     //{"success":true,"data":"","msg":""}
-                    var returnJson = $.parseJSON(returnData);
+                    returnData='{"success":true,"data":"","msg":""}'
+                     var returnJson = angular.fromJson(returnData);
+                    
                     if (returnJson.success) {
                         //success.apply(this,[returnJson.data]);
-                        defer.resolve(returnJson.data);
+                        deffer.resolve(returnJson.data);
                     } else {
                         //error.apply(this,[returnJson.msg]);
-                        defer.reject(returnJson.data);
+                        deffer.reject(returnJson.data);
                     }
 
 
@@ -474,8 +504,8 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q', 'co
                 horiServiceScript.addDependency(requestDataOpration);
                 horiServiceScript.dispatch();
                 horiService.flushOperations();
-                return deffer.promise;
-            }
+                return promise;
+           
         }
 
 

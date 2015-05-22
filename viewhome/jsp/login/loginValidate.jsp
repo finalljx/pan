@@ -52,7 +52,7 @@
 					else{				
 								
 						json.put("success", false);
-						json.put("msg","登陆异常11123,请联系管理员。");
+						json.put("msg","登陆异常,请联系管理员。");
 						out.clear();
 						out.print(json);
 
