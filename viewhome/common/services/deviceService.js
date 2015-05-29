@@ -5,7 +5,7 @@
  * Time: 下午2:47
  * To change this template use File | Settings | File Templates.
  */
-angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$timeout', 'configService', 'horiService', function($http, $location, $q,$timeout, config, horiService) {
+angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$timeout', 'configService', function($http, $location, $q,$timeout, config) {
 
     var returnService = {};
 
@@ -231,9 +231,9 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
                 alert("componetXmlUrl = " + componetXmlUrl);
             }
 
-            var pushScene = new horiService.NativeOperation("application", "pushScene", [componetXmlUrl, targetUrl]);
+            var pushScene = new cherry.NativeOperation("application", "pushScene", [componetXmlUrl, targetUrl]);
             pushScene.dispatch();
-            horiService.flushOperations();
+            cherry.flushOperations();
         } else {
             if (config.browserDebug) {
                 $location.url(targetUrl);
@@ -254,11 +254,11 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
             } else {
                 var refreshFlag = "1";
             }
-            var popScene = new horiService.NativeOperation("application", "popScene", [refreshFlag]);
+            var popScene = new cherry.NativeOperation("application", "popScene", [refreshFlag]);
 
             popScene.dispatch();
 
-            horiService.flushOperations();
+            cherry.flushOperations();
 
         } else {
 
@@ -279,9 +279,9 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
         }
         if (_getMobileAgent()["mobile"]) {
 
-            var loading = new horiService.NativeOperation("application", "showLoadingSheet", ["20"]);
+            var loading = new cherry.NativeOperation("application", "showLoadingSheet", ["20"]);
             loading.dispatch();
-            horiService.flushOperations();
+            cherry.flushOperations();
         }
 
     }
@@ -294,9 +294,9 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
 
         }
         if (_getMobileAgent()["mobile"]) {
-            var hiddenLoading = new horiService.NativeOperation("application", "hideLoadingSheet", []);
+            var hiddenLoading = new cherry.NativeOperation("application", "hideLoadingSheet", []);
             hiddenLoading.dispatch();
-            horiService.flushOperations();
+            cherry.flushOperations();
 
         }
     }
@@ -308,9 +308,9 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
          */
         if (angular.isFunction(callback)) {
 
-            var getdeviceIdNative = new horiService.NativeOperation("application", "getDeviceId", []).dispatch();
+            var getdeviceIdNative = new cherry.NativeOperation("application", "getDeviceId", []).dispatch();
 
-            var horiServiceScript = new horiService.ScriptOperation(function() {
+            var horiServiceScript = new cherry.ScriptOperation(function() {
                 var deveiceId = "";
                 deveiceId = getdeviceIdNative.returnValue;
                 callback.apply(this, [deveiceId]);
@@ -319,7 +319,7 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
 
             horiServiceScript.addDependency(getdeviceIdNative);
             horiServiceScript.dispatch();
-            horiService.flushOperations();
+            cherry.flushOperations();
 
         } else {
             alert("请传入正确的回调函数");
@@ -340,15 +340,15 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
         if (title) {
             headerTitle = title;
         }
-        var titleOperation = new horiService.NativeOperation("case", "setProperty", ["title", headerTitle]).dispatch();
-        horiService.flushOperations();
+        var titleOperation = new cherry.NativeOperation("case", "setProperty", ["title", headerTitle]).dispatch();
+        cherry.flushOperations();
     }
 
 
     returnService.hideBackBtn = function() {
-        var setNavigationBack = new horiService.NativeOperation("case", "setProperty", ["backButtonHidden", "1"]);
+        var setNavigationBack = new cherry.NativeOperation("case", "setProperty", ["backButtonHidden", "1"]);
         setNavigationBack.dispatch();
-        horiService.flushOperations();
+        cherry.flushOperations();
 
     }
 
@@ -361,9 +361,9 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
          */
         if (angular.isFunction(callback)) {
 
-            var getdeviceTokeyNative = new horiService.NativeOperation("application", "getDeviceToken", []).dispatch();
+            var getdeviceTokeyNative = new cherry.NativeOperation("application", "getDeviceToken", []).dispatch();
 
-            var horiServiceScript = new horiService.ScriptOperation(function() {
+            var horiServiceScript = new cherry.ScriptOperation(function() {
                 var deveiceToken = "";
                 deveiceToken = getdeviceTokeyNative.returnValue;
 
@@ -373,7 +373,7 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
 
             horiServiceScript.addDependency(getdeviceTokeyNative);
             horiServiceScript.dispatch();
-            horiService.flushOperations();
+            cherry.flushOperations();
 
         } else {
             alert("请传入正确的回调函数");
@@ -388,9 +388,9 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
         if (angular.isFunction(callback)) {
 
             if (_getMobileAgent()["mobile"]) {
-                var getClientVersionNative = new horiService.NativeOperation("application", "getClientVersion", []).dispatch();
+                var getClientVersionNative = new cherry.NativeOperation("application", "getClientVersion", []).dispatch();
 
-                var horiServiceScript = new horiService.ScriptOperation(function() {
+                var horiServiceScript = new cherry.ScriptOperation(function() {
                     var clientVersion = "";
                     clientVersion = getClientVersionNative.returnValue;
 
@@ -400,7 +400,7 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
 
                 horiServiceScript.addDependency(getClientVersionNative);
                 horiServiceScript.dispatch();
-                horiService.flushOperations();
+                cherry.flushOperations();
                 return
             }
             if (config.browserDebug) {
@@ -468,7 +468,7 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
                 */
                 var deffer = $q.defer();
                 var promise=deffer.promise;
-                var requestDataOpration = new horiService.NativeOperation("application", "invokeAjax", [method.toLowerCase(), url, data]).dispatch();
+                var requestDataOpration = new cherry.NativeOperation("application", "invokeAjax", [method.toLowerCase(), url, data]).dispatch();
                 promise.success=function(fn){
                        
                         promise.then(function(clientData){
@@ -482,7 +482,7 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
                         }) 
                         return promise;
                     }
-                var horiServiceScript = new horiService.ScriptOperation(function() {
+                var horiServiceScript = new cherry.ScriptOperation(function() {
                     var returnData = "";
                     returnData = requestDataOpration.returnValue;
                     console.log(returnData)
@@ -503,7 +503,7 @@ angular.module('hori').factory('deviceService', ['$http', '$location', '$q','$ti
 
                 horiServiceScript.addDependency(requestDataOpration);
                 horiServiceScript.dispatch();
-                horiService.flushOperations();
+                cherry.flushOperations();
                 return promise;
            
         }

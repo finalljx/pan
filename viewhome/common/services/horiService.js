@@ -7,16 +7,13 @@
  * 提供基本和手机交互桥梁部分
  */
  var cherry = new Object();
-angular.module('hori').factory('horiService',['configService',function(config){
+(function(){
 
 
-    //全局变量，手机返回时调用
-    
-    var horiService;
     // _init()中调用不同平台的function 做相应的初始化_cherryIos和_cherryAndroid
     // var cherry;
     var self=this;
-    var uma;			// 用户手机浏览器版本
+    var uma;            // 用户手机浏览器版本
 
     /*
      * _getMobileAgent @return :返回用户浏览器类型 @type 对象{ shell:浏览器内核
@@ -775,5 +772,6 @@ angular.module('hori').factory('horiService',['configService',function(config){
         horiService=_bridge;
 
     })();
-         return horiService;
-}])
+
+})()
+
