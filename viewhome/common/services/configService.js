@@ -8,7 +8,7 @@
  */
 angular.module('hori').factory('configService', [function() {
     return {
-        browserDebug: false,
+        browserDebug: true,
         mobileDebug: false,
         timeOutAlertStr: "请求服务器超时，请检查网络",
         // 默认ajax超时时间，单位毫秒
