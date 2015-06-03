@@ -122,16 +122,19 @@ angular.module('hori').service('dataService', ['$q', '$http', '$ionicLoading', '
         // }
         dirName = "/" + dirName;
         // var url = configService.appServerHost + "view/mebox/blank/api/file/" + localStorage.getItem("containerName") + dirName + "&data-header=X-Auth-Token:" + localStorage.getItem("token") + "&data-result=text";
-        // var url = "https://box.vgolive.com/api/file/" + localStorage.getItem("containerName") + dirName+"/";
-        var url = "https://box.vgolive.com/api/file/049_f71937d9feaddd806e9e6ac335a7437a/11145/";
+        var url = "https://box.vgolive.com/api/file/" + localStorage.getItem("containerName") + dirName+"/";
+        // var url = "https://box.vgolive.com/api/file/049_f71937d9feaddd806e9e6ac335a7437a/11145/";
         console.log("makeDir----url=" + url);
 
 
         $http({
             method: "PUT",
             url:url,
-            "headers":{
-                "X-Auth-Token": localStorage.getItem("token")
+            headers:{
+                "X-Auth-Token": localStorage.getItem("token"),
+                "Content-Type": "application/json",
+                "X-Auth-Token1":"123"
+
             }
         }).success(function(data, status, headers, config) {
 

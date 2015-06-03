@@ -97,40 +97,39 @@ angular.module('hori', ['ionic'])
             $ionicLoading.show({
                 template: '登陆中...'
             });
-            var url = configService.appServerHost + 'view/mebox/loginvalidate/api/login?data-header=X-Auth-User:' + usr + '&data-header=X-Auth-Key:' + password + '&data-convert=xml&data-application=mebox';
+            // var url = configService.appServerHost + 'view/mebox/loginvalidate/api/login?data-header=X-Auth-User:' + usr + '&data-header=X-Auth-Key:' + password + '&data-convert=xml&data-application=mebox';
+            var url = 'https://box.vgolive.com/api/login';
+
             console.log("login url=" + url);
+
             $http({
                 method: 'GET',
                 url: url,
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+                    "Content-Type": "application/text; charset=UTF-8",
+                    "X-Auth-User":usr,
+                    "X-Auth-Key":password
                 }
             }).success(function(data, status, headers, config) {
 
-                console.log(data);
-                if (data.success) {
                     $ionicLoading.hide();
-                    localStorage.setItem("containerName", data.containerName);
-                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("containerName", headers()["x-container-name"]);
+                    localStorage.setItem("token", headers()["x-auth-token"]);
 
-                    $state.go("tabs.home");
-                } else {
-                    $ionicLoading.hide();
-                    var alertPopup = $ionicPopup.alert({
-                        title: '系统提示',
-                        template: data.msg
-                    });
-                }
+                     $state.go("tabs.home");     
+                
 
 
             }).error(function(data, status, headers, config) {
                 $ionicLoading.hide();
-                console.log(status);
-                console.log(headers);
-                console.log("11"+JSON.stringify(config));
+               var estr="登陆异常，请联系管理员";
+                if(status==401){
+
+                    estr="用户名或密码错误";
+                }
                 var alertPopup = $ionicPopup.alert({
                     title: '系统提示',
-                    template: '登陆异常，请联系管理员'
+                    template: estr
                 });
                 $scope.fileLists = [];
 
