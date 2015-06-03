@@ -16,9 +16,9 @@ angular.module('hori').factory('configService', [function() {
         oaServerName: "V7dev/DigiWin",
         oaMsgServer: "V7dev/DigiWin",
         oaMobileServer: "V7dev/DigiWin",
-        serverBaseUrl: "http://localhost:8080/",
+        serverBaseUrl: "http://192.168.0.101:8080/",
         encryptKey: "horiTech",
-        appServerHost: "http://localhost:8080/",
+        appServerHost: "http://192.168.0.101:8080/",
         appKey:"mebox"
     }
 }]);

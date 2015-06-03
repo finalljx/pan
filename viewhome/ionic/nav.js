@@ -16,7 +16,8 @@ angular.module('hori', ['ionic'])
                         templateUrl: "templates/home.html",
                         controller: "HomeCtrl"
                     }
-                }
+                },
+                cache:false
             })
 
         .state('tabs.fileList', {
@@ -56,7 +57,11 @@ angular.module('hori', ['ionic'])
         $urlRouterProvider.otherwise("/login");
 
     })
-    .controller('LoginCtrl', ['$scope', '$rootScope', '$http', '$state', '$ionicLoading', '$ionicPopup', 'configService', 'deviceService', function($scope, $rootScope, $http, $state, $ionicLoading, $ionicPopup, configService, deviceService) {
+.config(function($ionicConfigProvider) {
+    $ionicConfigProvider.tabs.position("bottom"); //Places them at the bottom for all OS
+    $ionicConfigProvider.tabs.style("standard"); //Makes them all look the same across all OS
+})
+    .controller('LoginCtrl', ['$scope', '$rootScope', '$http', '$state', '$ionicLoading', '$ionicPopup', 'configService', function($scope, $rootScope, $http, $state, $ionicLoading, $ionicPopup, configService) {
         $scope.userInfo = {
             userName: "",
             password: ""
@@ -92,7 +97,7 @@ angular.module('hori', ['ionic'])
             $ionicLoading.show({
                 template: '登陆中...'
             });
-            var url = configService.appServerHost + 'view/mebox/loginvalidate/api/login?data-header=X-Auth-User:' + usr + '&data-header=X-Auth-Key:' + password + '&data-convert=xml';
+            var url = configService.appServerHost + 'view/mebox/loginvalidate/api/login?data-header=X-Auth-User:' + usr + '&data-header=X-Auth-Key:' + password + '&data-convert=xml&data-application=mebox';
             console.log("login url=" + url);
             $http({
                 method: 'GET',
@@ -120,7 +125,9 @@ angular.module('hori', ['ionic'])
 
             }).error(function(data, status, headers, config) {
                 $ionicLoading.hide();
-                console.log(data);
+                console.log(status);
+                console.log(headers);
+                console.log("11"+JSON.stringify(config));
                 var alertPopup = $ionicPopup.alert({
                     title: '系统提示',
                     template: '登陆异常，请联系管理员'
@@ -134,6 +141,7 @@ angular.module('hori', ['ionic'])
     .controller('HomeCtrl', function($rootScope, $scope, $ionicLoading, $http, $state, $ionicHistory, $timeout, $ionicPopup, dataService) {
         $scope.fileLists = [];
         $rootScope.currentPath = "";
+        console.log("11123123");
         $rootScope.getDirFileList = function(dirPath, currentScope) {
 
             var fileListPromise = dataService.getFileList(dirPath);
@@ -152,17 +160,17 @@ angular.module('hori', ['ionic'])
 
         $scope.doRefresh = function() {
 
-            var fileListPromist = dataService.getUserFileList();
+            var fileListPromist = dataService.getFileList("");
 
             fileListPromist.then(function(data) {
 
                 $scope.fileLists = data;
                 $scope.$broadcast('scroll.refreshComplete');
-                $scope.$apply();
+                // $scope.$apply();
             }, function(errorData) {
                 $scope.fileLists = [];
                 $scope.$broadcast('scroll.refreshComplete');
-                $scope.$apply();
+                // $scope.$apply();
             }, function(notifiyData) {
 
             })
@@ -226,18 +234,18 @@ angular.module('hori', ['ionic'])
 
                     var deleteName = item.name;
                     if (item.type == "directory") {
-                        dir = dir + "/" + deleteName + "/";
+                        dir = "/"+dir + deleteName + "/";
                     }
                     if (item.type == "file") {
-                        dir = dir + "/" + deleteName;
+                        dir ="/"+ dir+ deleteName;
                     }
                     var url = "https://box.vgolive.com/api/file/" + localStorage.getItem("containerName") + dir + "";
                     
                     
                     $http({
                         method: "post",
-                        url,
-                        "headers": {
+                        url:url,
+                        headers: {
                             "X-Auth-Token": localStorage.getItem("token")
                         },
                         data: {
@@ -287,7 +295,7 @@ angular.module('hori', ['ionic'])
 
                     $http({
                         method: "delete",
-                        url,
+                        url:url,
                         "headers": {
                             "X-Auth-Token": localStorage.getItem("token")
                         }
@@ -409,16 +417,154 @@ angular.module('hori', ['ionic'])
         $rootScope.getDirFileList($scope.currentPath, $scope);
 
 
+        // $scope.doRefresh = function() {
+        //     $scope.fileLists.unshift({
+        //         "name": "do three",
+        //         "id": "file3",
+        //         "type": "directory"
+        //     });
+        //     $scope.$broadcast('scroll.refreshComplete');
+        //     $scope.$apply();
+        // };
         $scope.doRefresh = function() {
-            $scope.fileLists.unshift({
-                "name": "do three",
-                "id": "file3",
-                "type": "directory"
-            });
-            $scope.$broadcast('scroll.refreshComplete');
-            $scope.$apply();
-        };
 
+            var fileListPromist = dataService.getFileList($scope.currentPath);
+
+            fileListPromist.then(function(data) {
+
+                $scope.fileLists = data;
+                $scope.$broadcast('scroll.refreshComplete');
+                // $scope.$apply();
+            }, function(errorData) {
+                $scope.fileLists = [];
+                $scope.$broadcast('scroll.refreshComplete');
+                // $scope.$apply();
+            }, function(notifiyData) {
+
+            })
+
+        };
+        $scope.edit = function(item) {
+            console.log(item);
+             $scope.data = {}
+            var myPopup = $ionicPopup.show({
+                template: '<input type="text" ng-model="data.newName">',
+                title: '重命名',
+                subTitle: '请输入新名称',
+                scope: $scope,
+                buttons: [{
+                    text: 'Cancel'
+                }, {
+                    text: '<b>Save</b>',
+                    type: 'button-positive',
+                    onTap: function(e) {
+                        if (!$scope.data.newName) {
+                            //don't allow the user to close unless he enters wifi password
+                            e.preventDefault();
+                        } else {
+                            return $scope.data.newName;
+                        }
+                       
+                    }
+                }]
+            });
+            myPopup.then(function(res) {
+
+                if (res) {
+
+                    var dir = $rootScope.currentPath;
+
+                    var deleteName = item.name;
+                    if (item.type == "directory") {
+                        dir = "/"+dir  + deleteName + "/";
+                    }
+                    if (item.type == "file") {
+                        dir ="/"+ dir  + deleteName;
+                    }
+                    var url = "https://box.vgolive.com/api/file/" + localStorage.getItem("containerName") + dir + "";
+                    
+                    
+                    $http({
+                        method: "post",
+                        url:url,
+                        "headers": {
+                            "X-Auth-Token": localStorage.getItem("token")
+                        },
+                        data: {
+                            "newname": res
+                        }
+                    }).success(function(data, status, headers, config) {
+
+
+
+                        $ionicPopup.alert({
+                            title: "操作成功"
+                        });
+                        $scope.getDirFileList($rootScope.currentPath, $scope);
+
+                    }).error(function(data, status, headers, config) {
+                        $ionicPopup.alert({
+                            title: "操作失败"
+                        });
+                        alert(data.errstr);
+
+                    })
+                } else {
+                    console.log('You are not sure');
+                }
+            });
+        }
+        $scope.delete = function(item) {
+            console.log(item);
+            var dir = item.parent_dir;
+            var deleteName = item.name;
+            if (item.type == "directory") {
+                dir = "/"+dir  + deleteName + "/";
+            }
+            if (item.type == "file") {
+                dir = "/"+dir  + deleteName;
+            }
+            var confirmPopup = $ionicPopup.confirm({
+                title: '文件删除',
+                template: '确定要在删除' + deleteName
+            });
+            confirmPopup.then(function(res) {
+                if (res) {
+                    var url = "https://box.vgolive.com/api/file/" + localStorage.getItem("containerName") + dir;
+
+
+
+
+                    $http({
+                        method: "delete",
+                        url:url,
+                        "headers": {
+                            "X-Auth-Token": localStorage.getItem("token")
+                        }
+                    }).success(function(data, status, headers, config) {
+
+                        var fileList = $scope.fileLists;
+                        var index = $scope.fileLists.indexOf(item);
+                        fileList.splice(index, 1);
+                        $ionicPopup.alert({
+                            title: "删除成功"
+                        });
+
+
+                    }).error(function(data, status, headers, config) {
+                        $ionicPopup.alert({
+                            title: "删除失败"
+                        });
+                        alert(data.errstr);
+
+                    })
+                } else {
+                    console.log('You are not sure');
+                }
+            });
+
+
+        }
         $scope.openDirectory = function(item) {
 
             var thisDir = item.id;

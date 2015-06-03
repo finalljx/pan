@@ -3,7 +3,7 @@
  * Date: 2014-11-01
  * 提供各个功能模块的数据接口
  */
-angular.module('hori').service('dataService', ['$q', '$http','$ionicLoading', 'configService', 'deviceService', function($q, $http,$ionicLoading, configService, deviceService) {
+angular.module('hori').service('dataService', ['$q', '$http', '$ionicLoading', 'configService', function($q, $http, $ionicLoading, configService) {
 
 
     /*
@@ -21,8 +21,8 @@ angular.module('hori').service('dataService', ['$q', '$http','$ionicLoading', 'c
         $ionicLoading.show({
             template: '数据加载中...'
         });
-        deviceService.ajax({
-            'type': 'get',
+        $http({
+            'method': 'get',
             'url': url
         }).success(function(data, status, headers, config) {
             console.log("成功获取服务器内容");
@@ -84,8 +84,8 @@ angular.module('hori').service('dataService', ['$q', '$http','$ionicLoading', 'c
             'type': 'GET',
             'url': url,
             'headers': {
-                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-                }
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+            }
         }).success(function(data, status, headers, config) {
 
             var dirsList = data.dirs;
@@ -114,22 +114,28 @@ angular.module('hori').service('dataService', ['$q', '$http','$ionicLoading', 'c
 
         return deffer.promise;
     };
-    this.makeDir=function(dirName){
-          var deffer = $q.defer();
+    this.makeDir = function(dirName) {
+        var deffer = $q.defer();
 
         // if(dirName!=""){
         //     dirName="/"+dirName;
         // }
         dirName = "/" + dirName;
         // var url = configService.appServerHost + "view/mebox/blank/api/file/" + localStorage.getItem("containerName") + dirName + "&data-header=X-Auth-Token:" + localStorage.getItem("token") + "&data-result=text";
-         // var url = "https://box.vgolive.com/api/file/" + localStorage.getItem("containerName") + dirName+"/";
-         var url="https://box.vgolive.com/api/file/049_f71937d9feaddd806e9e6ac335a7437a/11145/";
+        // var url = "https://box.vgolive.com/api/file/" + localStorage.getItem("containerName") + dirName+"/";
+        var url = "https://box.vgolive.com/api/file/049_f71937d9feaddd806e9e6ac335a7437a/11145/";
         console.log("makeDir----url=" + url);
-        
 
-        $http({method:"PUT",url,"headers":{"X-Auth-Token":localStorage.getItem("token")}}).success(function(data, status, headers, config) {
 
-                
+        $http({
+            method: "PUT",
+            url:url,
+            "headers":{
+                "X-Auth-Token": localStorage.getItem("token")
+            }
+        }).success(function(data, status, headers, config) {
+
+
             deffer.resolve();
 
         }).error(function(data, status, headers, config) {
@@ -137,6 +143,6 @@ angular.module('hori').service('dataService', ['$q', '$http','$ionicLoading', 'c
         })
 
         return deffer.promise;
-      
+
     }
 }])

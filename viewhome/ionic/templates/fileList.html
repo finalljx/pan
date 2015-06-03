@@ -31,11 +31,12 @@
                 <ion-list>
                     <ion-item ng-repeat="item in fileLists" item="item" ng-click="openDirectory(item)" class="item-remove-animate item-icon-left"><i class="icon ion-ios-folder-outline" ng-show="item.type=='directory'"></i>{{ item.name }}
                         <ion-option-button class="button-assertive" ng-click="edit(item)">
-                            Edit
+                            重命名
                         </ion-option-button>
-                        <ion-option-button class="button-calm" ng-click="share(item)">
-                            Share
+                        <ion-option-button class="button-assertive" ng-click="delete(item)">
+                            删除
                         </ion-option-button>
+
                     </ion-item>
                 </ion-list>
             </div>

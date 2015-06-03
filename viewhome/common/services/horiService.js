@@ -747,14 +747,14 @@
         if(ua["mobile"]){
             if(ua["mobile"]==="apple"){
                 // 手机 重置浏览器调试开关
-                config.browserDebug=false;
+               
                 _bridge=_cherryIos();
                 // 兼容ios客户端暴露cherry.bridge
                 // cherry.bridge=cherry;
 
                 // return
             } else if(ua["mobile"]==="android"){
-                config.browserDebug=false;
+               
                 _bridge=_cherryAndroid();
 
                 // return
